@@ -16,7 +16,7 @@ iptables -A OUTPUT -p tcp --match multiport --dport 20,21 -j ACCEPT
 #bind9
 
 iptables -A INPUT -p udp --dport 53 -j ACCEPT
-iptables -A OUTPUT -p udp --dport 53 -j ACCEP
+iptables -A OUTPUT -p udp --dport 53 -j ACCEPT
 
 #Not allow zone transfers
 
