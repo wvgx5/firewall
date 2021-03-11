@@ -1,0 +1,40 @@
+Wouter Van Gorp r0803049
+
+
+iptables -A OUTPUT -m state --state RELATED,ESTABLISHED -j ACCEPT
+
+# Apache
+
+iptables -A INPUT -p tcp --dport 80 -j ACCEPT
+iptables -A OUTPUT -p tcp --dport 80 -j ACCEPT
+
+#ProFTPD
+
+iptables -A INPUT -p tcp --match multiport --dport 20,21 -j ACCEPT
+iptables -A OUTPUT -p tcp --match multiport --dport 20,21 -j ACCEPT
+
+#bind9
+
+iptables -A INPUT -p udp --dport 53 -j ACCEPT
+iptables -A OUTPUT -p udp --dport 53 -j ACCEP
+
+#Not allow zone transfers
+
+iptables -A INPUT -p tcp -m state --state NEW -m tcp --dport 53 -j ACCEPT
+iptables -A INPUT -p udp -m state --state NEW -m udp --dport 53 -j DROP
+
+#Not allowed to make ongoing connection except securiy updates
+
+iptables -A OUTPUT -d security.debian.org --dport 80 -j ACCEPT
+iptables -A INPUT -m state --state ESTABLISHED,RELATED -j ACCEPT
+iptables -P OUTPUT DROP
+
+#Prevent ping flooding
+
+iptables -t filter -A INPUT -p icmp --icmp-type echo-request -m limit --limit 5/minute -j ACCEPT
+iptables -t filter -A INPUT -p icmp -j DROP
+iptables -t filter -A OUTPUT -p icmp --icmp-type echo-reply -j ACCEPT
+
+#The final line
+
+iptables -A INPUT -J DROP
